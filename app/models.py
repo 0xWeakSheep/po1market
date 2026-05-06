@@ -63,9 +63,10 @@ class CandidateSource(BaseModel):
     rationale: str | None = None
 
 
-class RecommendationResponse(BaseModel):
-    market: MarketContext
-    recommended_sources: list[CandidateSource]
-    rejected_sources: list[CandidateSource] = Field(default_factory=list)
-    scoring_strategy: str
+class RecommendedLink(BaseModel):
+    url: HttpUrl
+    score: float = Field(default=0.0)
 
+
+class RecommendationResponse(BaseModel):
+    recommended_sources: list[RecommendedLink]

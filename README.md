@@ -13,7 +13,7 @@ Given a Polymarket market ID or question, the service:
 ## MVP scope
 
 - input: `market_id` or raw market question
-- outputs: ranked list of news / social / official links
+- outputs: ranked list of links with a placeholder `score` field currently fixed at `0`
 - scoring: heuristic by default, optional OpenAI reranking when `PO1MARKET_OPENAI_API_KEY` is set
 - stale handling: links beyond a freshness threshold are rejected or heavily penalized
 
@@ -50,6 +50,23 @@ Example request without Polymarket lookup:
   "market_question": "Will Trump tweet today?",
   "market_description": "Resolve yes if Donald Trump posts on X before 11:59 PM ET.",
   "resolution_source": "https://truthsocial.com/@realDonaldTrump"
+}
+```
+
+Example response:
+
+```json
+{
+  "recommended_sources": [
+    {
+      "url": "https://news.google.com/rss/articles/...",
+      "score": 0
+    },
+    {
+      "url": "https://www.reddit.com/...",
+      "score": 0
+    }
+  ]
 }
 ```
 

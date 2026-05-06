@@ -3,7 +3,7 @@ from __future__ import annotations
 from app.clients.polymarket import PolymarketClient
 from app.clients.search import SearchClient
 from app.config import Settings
-from app.models import MarketContext, RecommendationRequest, RecommendationResponse
+from app.models import MarketContext, RecommendationRequest, RecommendationResponse, RecommendedLink
 from app.services.query_builder import build_search_queries
 from app.services.scoring import ScoringService
 
@@ -28,14 +28,10 @@ class RecommendationService:
             resolution_source=market.resolution_source,
             candidate_limit=request.candidate_limit,
         )
-        scored_candidates, strategy = await self.scoring_service.score_candidates(market, candidates)
+        scored_candidates, _ = await self.scoring_service.score_candidates(market, candidates)
         recommended = [item for item in scored_candidates if not item.stale][: request.max_results]
-        rejected = [item for item in scored_candidates if item.stale]
         return RecommendationResponse(
-            market=market,
-            recommended_sources=recommended,
-            rejected_sources=rejected if request.include_rejected else [],
-            scoring_strategy=strategy,
+            recommended_sources=[RecommendedLink(url=item.url, score=0.0) for item in recommended],
         )
 
     async def _resolve_market(self, request: RecommendationRequest) -> MarketContext:
@@ -66,4 +62,3 @@ class RecommendationService:
                 resolution_source=request.resolution_source,
             ),
         )
-
