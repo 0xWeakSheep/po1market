@@ -1,10 +1,29 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import HomePage from "@/app/page";
-import { QueryConsole } from "@/components/search/query-console";
+import { QueryConsole } from "@/components/search/QueryConsole";
 
 describe("QueryConsole", () => {
+  beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://127.0.0.1:3001");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          recommended_sources: [{ url: "https://docs.example.com/resolution", score: 0.84 }],
+        }),
+      }),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
   it("renders both query modes", () => {
     render(<QueryConsole />);
 
@@ -12,7 +31,7 @@ describe("QueryConsole", () => {
     expect(screen.getByText(/use custom market/i)).toBeInTheDocument();
   });
 
-  it("runs the example custom market interaction and shows ranked output", async () => {
+  it("runs the example custom market interaction and shows ranked output from the API", async () => {
     const user = userEvent.setup();
 
     render(<QueryConsole />);
@@ -21,8 +40,22 @@ describe("QueryConsole", () => {
     await user.click(screen.getByRole("button", { name: /find sources/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/prototype result generated/i)).toBeInTheDocument();
+      expect(vi.mocked(fetch)).toHaveBeenCalledWith(
+        "http://127.0.0.1:3001/api/v1/recommendations",
+        expect.objectContaining({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    });
+
+    await waitFor(() => {
       expect(screen.getByText("0.84")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "docs.example.com" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "docs.example.com" })).toHaveAttribute(
+        "href",
+        "https://docs.example.com/resolution",
+      );
     });
   });
 
@@ -35,10 +68,19 @@ describe("QueryConsole", () => {
 
     expect(screen.getByLabelText(/market id/i)).toHaveValue("540816");
   });
+
+  it("disables submit when the API base URL is not configured", () => {
+    vi.unstubAllEnvs();
+
+    render(<QueryConsole />);
+
+    expect(screen.getByRole("button", { name: /find sources/i })).toBeDisabled();
+    expect(screen.getByText(/NEXT_PUBLIC_API_BASE_URL/i)).toBeInTheDocument();
+  });
 });
 
 describe("HomePage", () => {
-  it("renders a workbench-first homepage with named panels and faq below the fold", () => {
+  it("renders overview, console anchor, API reference, and FAQ", () => {
     render(<HomePage />);
 
     const main = screen.getByRole("main");
@@ -46,30 +88,24 @@ describe("HomePage", () => {
 
     expect(
       within(main).getByRole("heading", {
-        name: /signal surface/i,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      within(main).getByRole("heading", {
-        name: /ranked sources/i,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      within(main).getByRole("heading", {
-        name: /discovery flow/i,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      within(main).getByRole("heading", {
-        name: /target contract/i,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      within(main).getByRole("heading", {
         level: 1,
         name: /find signal before the market moves/i,
       }),
     ).toBeInTheDocument();
+    expect(
+      within(main).getByRole("heading", {
+        name: /^how it works$/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(main).getByRole("heading", {
+        name: /api reference/i,
+      }),
+    ).toBeInTheDocument();
     expect(within(main).getByRole("heading", { name: /faq/i })).toBeInTheDocument();
+
+    expect(document.getElementById("intro")).not.toBeNull();
+    expect(document.getElementById("console")).not.toBeNull();
+    expect(document.getElementById("api")).not.toBeNull();
   });
 });

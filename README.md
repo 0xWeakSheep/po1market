@@ -1,77 +1,38 @@
 # po1market
 
-`po1market` is an AI-curated source recommendation API for Polymarket markets.
+Applications in this repo:
 
-Given a Polymarket market ID or question, the service:
+- **`backend/`** — **NestJS recommendation API** — implements `POST /api/v1/recommendations` (scoring, data, validation).
+- **`frontend/`** — **Next.js UI** — Query Console, layout, and browser `fetch` client only; see `frontend/README.md` for layout and backend vs frontend responsibilities.
 
-- fetches market context from Polymarket Gamma API
-- generates search queries from the market wording and resolution rules
-- gathers candidate links from news and social sources
-- scores each link for semantic relevance and freshness
-- demotes stale links and returns a ranked recommendation list
+## 职责划分（简表）
 
-## MVP scope
+- **后端 (`backend/`)**：预测市场解析、来源推荐与返回 JSON 契约。
+- **前端 (`frontend/`)**：表单、调用上述 API、展示结果；不内置业务打分或 mock 结果集。
 
-- input: `market_id` or raw market question
-- outputs: ranked list of links with a placeholder `score` field currently fixed at `0`
-- scoring: heuristic by default, optional OpenAI reranking when `PO1MARKET_OPENAI_API_KEY` is set
-- stale handling: links beyond a freshness threshold are rejected or heavily penalized
-
-## Quick start
+## API (Nest)
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e '.[dev]'
-uvicorn app.main:app --reload
+cd backend
+npm install
+npm run start:dev
 ```
 
-Open `http://127.0.0.1:8000/docs`.
+Port defaults to `3000` (set `PORT`). Env vars: `PO1MARKET_*` — see `backend/src/config/settings.ts` and `backend/README.md`.
 
-## API
+Run tests:
 
-`POST /api/v1/recommendations`
-
-Example request:
-
-```json
-{
-  "market_id": "540816",
-  "max_results": 8,
-  "candidate_limit": 20,
-  "include_rejected": true
-}
+```bash
+cd backend
+npm test
 ```
 
-Example request without Polymarket lookup:
+## Frontend
 
-```json
-{
-  "market_question": "Will Trump tweet today?",
-  "market_description": "Resolve yes if Donald Trump posts on X before 11:59 PM ET.",
-  "resolution_source": "https://truthsocial.com/@realDonaldTrump"
-}
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-Example response:
-
-```json
-{
-  "recommended_sources": [
-    {
-      "url": "https://news.google.com/rss/articles/...",
-      "score": 0
-    },
-    {
-      "url": "https://www.reddit.com/...",
-      "score": 0
-    }
-  ]
-}
-```
-
-## Notes
-
-- Polymarket market metadata is fetched from the public Gamma API.
-- Google News RSS and Reddit search are used as zero-key MVP candidate providers.
-- LLM reranking is optional and falls back to heuristic scoring automatically.
+Use `frontend/.env.local` for local runs: see `frontend/.env.example` — direct `NEXT_PUBLIC_API_BASE_URL` or same-origin proxy (`BACKEND_PROXY_TARGET` + `NEXT_PUBLIC_API_BASE_URL=/api/po1market`). Without the public base URL, the console cannot submit queries.
