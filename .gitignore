@@ -7,3 +7,12 @@ build/
 *.egg-info/
 *.pyc
 .env
+frontend/node_modules/
+frontend/.next/
+frontend/coverage/
+docs/*
+node_modules/
+.cursor
+.npm-cache
+package-lock.json
+package.json
