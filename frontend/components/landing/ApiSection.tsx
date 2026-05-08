@@ -51,8 +51,7 @@ export function ApiSection() {
     >
       <div ref={cardRef} style={{ perspective: "1000px" }}>
         <PanelShell
-          energyBorder
-          className="p-6 backdrop-blur-sm sm:p-8"
+          className="border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm sm:p-8"
         >
           <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500">
             [ API ]

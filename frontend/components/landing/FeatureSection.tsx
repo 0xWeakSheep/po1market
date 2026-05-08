@@ -91,11 +91,10 @@ export function FeatureSection() {
             }}
           >
             <PanelShell
-              energyBorder
-              className="h-full p-6 backdrop-blur-sm sm:p-8"
+              className="h-full border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm sm:p-8"
             >
               <div className="flex h-full flex-col">
-                <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500">
+                <span className="feature-number font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500">
                   0{i + 1}
                 </span>
                 <h3 className="mt-3 text-lg font-semibold text-white">{f.title}</h3>

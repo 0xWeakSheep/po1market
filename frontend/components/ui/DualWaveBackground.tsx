@@ -1,16 +1,13 @@
 "use client";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const LEFT_WORDS = [
   "SIGNAL",
-  "POLYMARKET", //基准词
+  "POLYMARKET",
   "RANK",
   "RESOLUTION",
   "MARKET",
-  
   "WORKBENCH",
   "INGEST",
   "PIPELINE",
@@ -22,7 +19,7 @@ const LEFT_WORDS = [
 
 const RIGHT_WORDS = [
   "FETCH",
-  "SOURCES", //基准词
+  "SOURCES",
   "EVIDENCE",
   "TYPED",
   "ORACLE",
@@ -35,151 +32,62 @@ const RIGHT_WORDS = [
   "PROOF",
 ];
 
+interface FlashItem {
+  index: number;
+  side: "left" | "right";
+  intensity: number; // 0-1
+  color: "cyan" | "violet" | "emerald" | "white";
+}
+
+function getPrefersReducedMotion(): boolean {
+  if (typeof window === "undefined" || !window.matchMedia) return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function DualWaveBackground() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [flashes, setFlashes] = useState<FlashItem[]>([]);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+    if (getPrefersReducedMotion()) return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    const leftCount = 28;
+    const rightCount = 28;
+    const totalCount = leftCount + rightCount;
 
-    const leftColumn = wrapper.querySelector(".wave-column-left") as HTMLElement | null;
-    const rightColumn = wrapper.querySelector(".wave-column-right") as HTMLElement | null;
-    if (!leftColumn || !rightColumn) return;
+    function scheduleFlash() {
+      const delay = Math.random() * 1500 + 800; // 800-2300ms between flashes
+      const timer = setTimeout(() => {
+        const side: "left" | "right" = Math.random() > 0.5 ? "left" : "right";
+        const count = side === "left" ? leftCount : rightCount;
+        const index = Math.floor(Math.random() * count);
+        const intensity = Math.random();
+        const colors: FlashItem["color"][] = ["cyan", "violet", "emerald", "white"];
+        const color = colors[Math.floor(Math.random() * colors.length)];
 
-    const leftTexts = gsap.utils.toArray<HTMLElement>(
-      leftColumn.querySelectorAll(".animated-text")
-    );
-    const rightTexts = gsap.utils.toArray<HTMLElement>(
-      rightColumn.querySelectorAll(".animated-text")
-    );
-    if (leftTexts.length === 0 || rightTexts.length === 0) return;
+        const flash: FlashItem = { index, side, intensity, color };
+        setFlashes((prev) => [...prev.slice(-8), flash]);
 
-    const leftQuickSetters = leftTexts.map((text) =>
-      gsap.quickTo(text, "x", { duration: 0.6, ease: "power4.out" })
-    );
-    const rightQuickSetters = rightTexts.map((text) =>
-      gsap.quickTo(text, "x", { duration: 0.6, ease: "power4.out" })
-    );
+        // Auto-remove this flash after animation completes
+        const duration = intensity > 0.7 ? 1200 : intensity > 0.4 ? 900 : 650;
+        const removeTimer = setTimeout(() => {
+          setFlashes((prev) => prev.filter((f) => f !== flash));
+        }, duration + 80);
+        timersRef.current.push(removeTimer);
 
-    const waveNumber = 2;
-    const waveSpeed = 1;
-
-    function calculateRanges() {
-      const maxLeftWidth = Math.max(...leftTexts.map((t) => t.offsetWidth));
-      const maxRightWidth = Math.max(...rightTexts.map((t) => t.offsetWidth));
-      return {
-        left: {
-          minX: 0,
-          maxX: leftColumn!.offsetWidth - maxLeftWidth,
-        },
-        right: {
-          minX: 0,
-          maxX: rightColumn!.offsetWidth - maxRightWidth,
-        },
-      };
+        scheduleFlash();
+      }, delay);
+      timersRef.current.push(timer);
     }
 
-    let ranges = calculateRanges();
-
-    function setInitialPositions(
-      texts: HTMLElement[],
-      range: { minX: number; maxX: number },
-      multiplier: number
-    ) {
-      const rangeSize = range.maxX - range.minX;
-      texts.forEach((text, index) => {
-        const initialPhase = waveNumber * index - Math.PI / 2;
-        const initialWave = Math.sin(initialPhase);
-        const initialProgress = (initialWave + 1) / 2;
-        const startX =
-          (range.minX + initialProgress * rangeSize) * multiplier;
-        gsap.set(text, { x: startX });
-      });
+    // Two concurrent flash streams for sparse, cinematic feel
+    for (let i = 0; i < 2; i++) {
+      setTimeout(() => scheduleFlash(), i * 400);
     }
-
-    setInitialPositions(leftTexts, ranges.left, 1);
-    setInitialPositions(rightTexts, ranges.right, -1);
-
-    function findClosestToViewportCenter() {
-      const viewportCenter = window.innerHeight / 2;
-      let closestIndex = 0;
-      let minDistance = Infinity;
-      leftTexts.forEach((text, index) => {
-        const rect = text.getBoundingClientRect();
-        const elementCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(elementCenter - viewportCenter);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestIndex = index;
-        }
-      });
-      return closestIndex;
-    }
-
-    function updateColumn(
-      texts: HTMLElement[],
-      setters: ReturnType<typeof gsap.quickTo>[],
-      range: { minX: number; maxX: number },
-      progress: number,
-      focusedIndex: number,
-      multiplier: number
-    ) {
-      const rangeSize = range.maxX - range.minX;
-      texts.forEach((text, index) => {
-        const phase =
-          waveNumber * index +
-          waveSpeed * progress * Math.PI * 2 -
-          Math.PI / 2;
-        const wave = Math.sin(phase);
-        const cycleProgress = (wave + 1) / 2;
-        const finalX =
-          (range.minX + cycleProgress * rangeSize) * multiplier;
-        setters[index](finalX);
-
-        if (index === focusedIndex) {
-          text.classList.add("focused");
-        } else {
-          text.classList.remove("focused");
-        }
-      });
-    }
-
-    const st = ScrollTrigger.create({
-      trigger: document.body,
-      start: "top top",
-      end: "bottom bottom",
-      onUpdate: () => {
-        const progress = window.scrollY / (window.innerHeight || 1);
-        const focusedIndex = findClosestToViewportCenter();
-        updateColumn(
-          leftTexts,
-          leftQuickSetters,
-          ranges.left,
-          progress,
-          focusedIndex,
-          1
-        );
-        updateColumn(
-          rightTexts,
-          rightQuickSetters,
-          ranges.right,
-          progress,
-          focusedIndex,
-          -1
-        );
-      },
-    });
-
-    const handleResize = () => {
-      ranges = calculateRanges();
-    };
-    window.addEventListener("resize", handleResize);
 
     return () => {
-      st.kill();
-      window.removeEventListener("resize", handleResize);
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
     };
   }, []);
 
@@ -192,31 +100,76 @@ export function DualWaveBackground() {
     (_, i) => RIGHT_WORDS[i % RIGHT_WORDS.length]
   );
 
+  function isFlashing(side: "left" | "right", index: number): FlashItem | undefined {
+    return flashes.find((f) => f.side === side && f.index === index);
+  }
+
   return (
     <div
-      ref={wrapperRef}
       className="pointer-events-none fixed inset-0 z-0 hidden select-none md:flex"
       style={{ gap: "22vw", padding: "0 2.5rem" }}
     >
-      <div className="wave-column-left flex h-full flex-1 flex-col justify-between py-10">
-        {leftWords.map((word, i) => (
-          <div
-            key={`l-${i}`}
-            className="animated-text w-max font-mono text-[clamp(0.85rem,2vw,1.4rem)] font-medium uppercase leading-[0.7] tracking-[0.1em] text-slate-500/30 transition-colors duration-300"
-          >
-            {word}
-          </div>
-        ))}
+      <div className="flex h-full flex-1 flex-col justify-between py-10">
+        {leftWords.map((word, i) => {
+          const flash = isFlashing("left", i);
+          return (
+            <div
+              key={`l-${i}`}
+              className={`w-max font-mono text-[clamp(0.85rem,2vw,1.4rem)] font-medium uppercase leading-[0.7] tracking-[0.1em] transition-none ${
+                flash
+                  ? `flash-active flash-${flash.color} ${
+                      flash.intensity > 0.7 ? "flash-glitch" : ""
+                    }`
+                  : "text-slate-500/[0.025]"
+              }`}
+              style={
+                flash
+                  ? {
+                      animationDuration:
+                        flash.intensity > 0.7
+                          ? "350ms"
+                          : flash.intensity > 0.4
+                            ? "250ms"
+                            : "180ms",
+                    }
+                  : undefined
+              }
+            >
+              {word}
+            </div>
+          );
+        })}
       </div>
-      <div className="wave-column-right flex h-full flex-1 flex-col items-end justify-between py-10">
-        {rightWords.map((word, i) => (
-          <div
-            key={`r-${i}`}
-            className="animated-text w-max font-mono text-[clamp(0.85rem,2vw,1.4rem)] font-medium uppercase leading-[0.7] tracking-[0.1em] text-slate-500/30 transition-colors duration-300"
-          >
-            {word}
-          </div>
-        ))}
+      <div className="flex h-full flex-1 flex-col items-end justify-between py-10">
+        {rightWords.map((word, i) => {
+          const flash = isFlashing("right", i);
+          return (
+            <div
+              key={`r-${i}`}
+              className={`w-max font-mono text-[clamp(0.85rem,2vw,1.4rem)] font-medium uppercase leading-[0.7] tracking-[0.1em] transition-none ${
+                flash
+                  ? `flash-active flash-${flash.color} ${
+                      flash.intensity > 0.7 ? "flash-glitch" : ""
+                    }`
+                  : "text-slate-500/[0.025]"
+              }`}
+              style={
+                flash
+                  ? {
+                      animationDuration:
+                        flash.intensity > 0.7
+                          ? "350ms"
+                          : flash.intensity > 0.4
+                            ? "250ms"
+                            : "180ms",
+                    }
+                  : undefined
+              }
+            >
+              {word}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
