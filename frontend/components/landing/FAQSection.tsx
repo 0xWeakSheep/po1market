@@ -109,8 +109,7 @@ export function FAQSection() {
             }}
           >
             <PanelShell
-              energyBorder
-              className="h-full p-6 backdrop-blur-sm"
+              className="h-full border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm"
             >
               <h3 className="text-lg font-medium text-white">{faq.q}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-300/80">{faq.a}</p>

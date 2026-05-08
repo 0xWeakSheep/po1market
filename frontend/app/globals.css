@@ -424,6 +424,112 @@ body::after {
   text-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
 }
 
+/* ── Movie flash text effect (DualWaveBackground) ── */
+.flash-active {
+  animation: flash-appear var(--flash-duration, 250ms) ease-out forwards;
+}
+
+.flash-cyan {
+  color: rgb(34 211 238 / 0.85);
+  text-shadow:
+    0 0 8px rgba(34, 211, 238, 0.5),
+    0 0 24px rgba(34, 211, 238, 0.2);
+}
+
+.flash-violet {
+  color: rgb(139 92 246 / 0.85);
+  text-shadow:
+    0 0 8px rgba(139, 92, 246, 0.5),
+    0 0 24px rgba(139, 92, 246, 0.2);
+}
+
+.flash-emerald {
+  color: rgb(52 211 153 / 0.85);
+  text-shadow:
+    0 0 8px rgba(52, 211, 153, 0.5),
+    0 0 24px rgba(52, 211, 153, 0.2);
+}
+
+.flash-white {
+  color: rgb(255 255 255 / 0.9);
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.6),
+    0 0 18px rgba(255, 255, 255, 0.25);
+}
+
+@keyframes flash-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateX(-2px);
+    filter: blur(2px);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1.08) translateX(1px);
+    filter: blur(0px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.02) translateX(0px);
+  }
+  70% {
+    opacity: 0.95;
+    transform: scale(1.01);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(1px);
+  }
+}
+
+/* Glitch flash variant — color channel separation */
+.flash-glitch {
+  animation-name: flash-glitch-appear;
+}
+
+@keyframes flash-glitch-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateX(-4px);
+    filter: blur(3px);
+    text-shadow:
+      -2px 0 rgba(34, 211, 238, 0.6),
+      2px 0 rgba(139, 92, 246, 0.6);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.15) translateX(2px);
+    filter: blur(0px);
+    text-shadow:
+      3px 0 rgba(34, 211, 238, 0.8),
+      -3px 0 rgba(139, 92, 246, 0.8);
+  }
+  25% {
+    transform: scale(1.05) translateX(-1px);
+    text-shadow:
+      -1px 0 rgba(34, 211, 238, 0.5),
+      1px 0 rgba(139, 92, 246, 0.5);
+  }
+  40% {
+    opacity: 0.98;
+    transform: scale(1.02) translateX(0px);
+    text-shadow: none;
+  }
+  65% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+    filter: blur(2px);
+    text-shadow: none;
+  }
+}
+
 /* Reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .energy-border .energy-core,
@@ -441,5 +547,10 @@ body::after {
 
   .ambient-orb {
     opacity: 0.08;
+  }
+
+  .flash-active {
+    animation: none !important;
+    opacity: 0.5;
   }
 }
