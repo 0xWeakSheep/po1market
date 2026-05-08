@@ -8,15 +8,12 @@ import { PanelShell } from "@/components/ui/PanelShell";
 
 const FAQS = [
   {
-    q: "Is this using live backend data?",
+    q: "Live data or mock?",
     a: (
       <>
-        When you set{" "}
+        Set{" "}
         <span className="font-mono text-xs text-emerald-300/90">NEXT_PUBLIC_API_BASE_URL</span>{" "}
-        in{" "}
-        <span className="font-mono text-xs text-emerald-300/90">frontend/.env.local</span>, the
-        Query Console on the dashboard calls the Nest recommendation API. Without that, the console
-        stays disabled for live queries.
+        to wire the Query Console to the live Nest backend. Without it, the console stays in preview mode.
       </>
     ),
   },
@@ -28,17 +25,9 @@ const FAQS = [
         <Link href="/dashboard" className="text-cyan-300/90 underline-offset-4 hover:underline">
           /dashboard
         </Link>{" "}
-        for the full workbench: overview, Query Console, and API reference in one flow.
+        for the full workbench.
       </>
     ),
-  },
-  {
-    q: "What happens after a query is typed?",
-    a: "The request is validated against the typed schema, then forwarded to the recommendation service. Sources are ranked by resolution relevance and returned as a tiered list.",
-  },
-  {
-    q: "Can I run this without a backend?",
-    a: "Yes. The frontend ships with a mock-first mode. Features and the console UI are fully usable before you wire the live API.",
   },
 ];
 
@@ -89,18 +78,18 @@ export function FAQSection() {
     <section
       ref={sectionRef}
       id="faq"
-      className="relative mx-auto w-full max-w-[1100px] px-4 py-24 sm:px-6 sm:py-32 lg:px-8"
+      className="relative mx-auto w-full max-w-[900px] px-4 py-24 sm:px-6 sm:py-32 lg:px-8"
     >
       <div className="mb-12 text-center">
         <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-cyan-300/85 sm:text-[11px]">
           [ FAQ ]
         </p>
         <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">
-          Common questions
+          Questions
         </h2>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2" style={{ perspective: "1000px" }}>
+      <div className="grid gap-4" style={{ perspective: "1000px" }}>
         {FAQS.map((faq, i) => (
           <div
             key={faq.q}
@@ -112,7 +101,7 @@ export function FAQSection() {
               className="h-full border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm"
             >
               <h3 className="text-lg font-medium text-white">{faq.q}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-300/80">{faq.a}</p>
+              <p className="mt-2 text-sm leading-7 text-slate-300/80">{faq.a}</p>
             </PanelShell>
           </div>
         ))}

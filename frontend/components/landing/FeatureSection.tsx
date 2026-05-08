@@ -8,19 +8,15 @@ import { PanelShell } from "@/components/ui/PanelShell";
 const FEATURES = [
   {
     title: "Typed Request",
-    desc: "Structure your market query with typed fields. No free-form guesswork—every parameter is validated before it hits the recommendation pipeline.",
+    desc: "Structured market queries with validated parameters. Every field is typed and checked before hitting the pipeline.",
   },
   {
     title: "Ranked Sources",
-    desc: "Evidence URLs are scored by resolution relevance, not just keyword match. Tier-1 sources surface first; context links follow.",
+    desc: "Evidence scored by resolution relevance, not keyword density. Tier-1 sources surface first.",
   },
   {
     title: "Live API",
-    desc: "Wire the frontend directly to the NestJS recommendation backend. Set NEXT_PUBLIC_API_BASE_URL and the console graduates from mock to live instantly.",
-  },
-  {
-    title: "Resolution Relevance",
-    desc: "Scoring separates narrative energy from actual resolution evidence. Know which sources matter before the market resolves.",
+    desc: "Wire directly to the NestJS backend. Set NEXT_PUBLIC_API_BASE_URL and the console goes live instantly.",
   },
 ];
 
@@ -71,7 +67,7 @@ export function FeatureSection() {
     <section
       ref={sectionRef}
       id="features"
-      className="relative mx-auto w-full max-w-[1100px] px-4 py-24 sm:px-6 sm:py-32 lg:px-8"
+      className="relative mx-auto w-full max-w-[900px] px-4 py-24 sm:px-6 sm:py-32 lg:px-8"
     >
       <div className="mb-12 text-center">
         <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-cyan-300/85 sm:text-[11px]">
@@ -82,7 +78,7 @@ export function FeatureSection() {
         </h2>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2" style={{ perspective: "1000px" }}>
+      <div className="grid gap-5" style={{ perspective: "1000px" }}>
         {FEATURES.map((f, i) => (
           <div
             key={f.title}
@@ -93,12 +89,14 @@ export function FeatureSection() {
             <PanelShell
               className="h-full border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm sm:p-8"
             >
-              <div className="flex h-full flex-col">
-                <span className="feature-number font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500">
+              <div className="flex h-full flex-col sm:flex-row sm:items-start sm:gap-6">
+                <span className="feature-number shrink-0 font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500">
                   0{i + 1}
                 </span>
-                <h3 className="mt-3 text-lg font-semibold text-white">{f.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-300/80">{f.desc}</p>
+                <div>
+                  <h3 className="mt-2 text-lg font-semibold text-white sm:mt-0">{f.title}</h3>
+                  <p className="mt-2 text-sm leading-7 text-slate-300/80">{f.desc}</p>
+                </div>
               </div>
             </PanelShell>
           </div>

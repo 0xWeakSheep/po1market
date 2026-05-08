@@ -3,7 +3,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLayoutEffect, useRef } from "react";
-import { PanelShell } from "@/components/ui/PanelShell";
 
 function getPrefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
@@ -47,28 +46,20 @@ export function ApiSection() {
     <section
       ref={sectionRef}
       id="api"
-      className="relative mx-auto w-full max-w-[1100px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8"
+      className="relative mx-auto w-full max-w-[900px] px-4 py-12 sm:px-6 sm:py-16 lg:px-8"
     >
       <div ref={cardRef} style={{ perspective: "1000px" }}>
-        <PanelShell
-          className="border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm sm:p-8"
-        >
+        <div className="rounded-[30px] border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm sm:p-8">
           <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-slate-500">
             [ API ]
           </p>
-          <h2 className="mt-3 text-sm font-medium uppercase tracking-[0.28em] text-slate-200">
-            API reference
-          </h2>
-          <p className="mt-4 font-mono text-sm text-white">
+          <p className="mt-3 font-mono text-sm text-white">
             POST /api/v1/recommendations
           </p>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300/85">
-            Implemented by the Nest service in{" "}
-            <span className="font-mono text-xs text-slate-400">backend/</span>. The Next app only
-            serializes the form, calls this endpoint from the browser, and renders the JSON
-            response — no prediction or ranking logic lives in the frontend bundle.
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300/85">
+            The Next app serializes the form, calls the endpoint from the browser, and renders the JSON response — no ranking logic in the frontend bundle.
           </p>
-        </PanelShell>
+        </div>
       </div>
     </section>
   );
