@@ -14,5 +14,3 @@ docs/*
 node_modules/
 .cursor
 .npm-cache
-package-lock.json
-package.json

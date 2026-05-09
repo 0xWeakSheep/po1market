@@ -1,0 +1,65 @@
+name: Backend Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deploy target environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+      image_tag:
+        description: "Docker image tag to deploy"
+        required: true
+        default: "main"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy deployment manifest
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: deploy/backend-compose.yml
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 1
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GHCR_OWNER: ${{ github.repository_owner }}
+          GHCR_REPOSITORY: ${{ github.event.repository.name }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          BACKEND_PORT: ${{ vars.BACKEND_PORT || '3000' }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          envs: GHCR_OWNER,GHCR_REPOSITORY,GHCR_USERNAME,GHCR_TOKEN,IMAGE_TAG,BACKEND_PORT,DEPLOY_PATH
+          script: |
+            set -eu
+            mkdir -p "$DEPLOY_PATH"
+            cd "$DEPLOY_PATH"
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+            docker compose -f backend-compose.yml pull
+            docker compose -f backend-compose.yml up -d
+            docker image prune -f
