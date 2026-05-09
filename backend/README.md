@@ -19,6 +19,7 @@ npm run start:dev    # watch mode
 npm run build
 npm run start:prod   # node dist/main
 npm test
+docker build -t po1market-backend .
 ```
 
 Default HTTP port: `3000` (override with `PORT`).
@@ -30,3 +31,13 @@ Default HTTP port: `3000` (override with `PORT`).
 | GET | `/` | `{ root: true }` |
 | GET | `/health` | `{ status: "ok" }` |
 | POST | `/api/v1/recommendations` | Body: `market_id` and/or `market_question`, etc. Returns `{ recommended_sources: [...] }`. Status **200** (not 201). |
+
+## GitHub Delivery
+
+GitHub Actions workflows live in `.github/workflows/`:
+
+- `backend-ci.yml` — install, test, build
+- `backend-image.yml` — build and push `ghcr.io/<owner>/<repo>-backend`
+- `backend-deploy.yml` — pull and restart the container on a remote host over SSH
+
+Deployment notes and required GitHub secrets are documented in `../deploy/README.md`.

@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+coverage
+dist
+.DS_Store
+.git
+.github
+.idea
+.vscode
