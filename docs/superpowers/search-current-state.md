@@ -18,8 +18,8 @@
 链路顺序：
 
 1. `RecommendationsService.recommend` 标准化请求与默认参数
-2. `resolveMarket` 解析市场上下文（来自 `market_id` 或自定义问题）
-3. `buildSearchQueries` 生成搜索查询词
+2. `RetrievalService.retrieve` 串联 query planning 与 candidate retrieval
+3. `QueryService.resolveMarketContext` 解析市场上下文并生成搜索查询词
 4. `SearchClient.gatherCandidates` 按 query 拉取候选源
 5. `ScoringService.scoreCandidates` 进行规则分 + 可选 LLM 分
 6. 过滤 stale，截断为 `max_results`，返回 `recommended_sources`
@@ -79,6 +79,16 @@
 - 现状注意：
   - 当前实现中 `score` 固定写为 `0`，未透传真实排序分值；
   - 对前端与调用方而言，可解释性和调试信息不足。
+
+### 3.5 Recommendations 模块职责边界
+
+- 模块定位：推荐结果编排层，不承载 query 规则细节；
+- 核心职责：
+  - 参数标准化；
+  - 调用 Retrieval 层获取 `MarketContext` 与候选池；
+  - 调用候选召回与打分；
+  - 过滤后组装统一响应契约；
+- 治理约束：`recommendations` 不再新增“市场上下文解析器”类，查询相关逻辑统一收口到 `retrieval` 层。
 
 ## 4. 前端消费现状
 
@@ -141,3 +151,4 @@
 - 设定后续迭代的指标口径与文档更新规则。
 - Query 模块拆分为独立 `QueryService`，并新增 query 预览接口 `POST /api/v1/search/queries`。
 - Query 模块升级为文件夹治理拆分：`api/domain/integration` 三层。
+- 推荐主链路改为直接调用 `QueryService.resolveMarketContext`，移除 `market-context.resolver`。

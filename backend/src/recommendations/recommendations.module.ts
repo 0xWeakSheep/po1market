@@ -5,10 +5,11 @@ import { getSettings } from '../config/settings'
 import { OpenAiClient } from './clients/openai.client'
 import { PolymarketClient } from './clients/polymarket.client'
 import { SearchClient } from './clients/search.client'
-import { MarketContextResolverService } from './domain/market/market-context.resolver'
 import { QueryController } from './query/api/query.controller'
 import { QueryService } from './query/domain/query.service'
 import { QueryMarketProvider } from './query/integration/query-market.provider'
+import { CandidateRetrieverService } from './retrieval/domain/candidate-retriever.service'
+import { RetrievalService } from './retrieval/domain/retrieval.service'
 import { RecommendationsController } from './recommendations.controller'
 import { RecommendationsService } from './recommendations.service'
 import { ScoringService } from './scoring.service'
@@ -22,7 +23,8 @@ import { ScoringService } from './scoring.service'
     OpenAiClient,
     QueryMarketProvider,
     QueryService,
-    MarketContextResolverService,
+    CandidateRetrieverService,
+    RetrievalService,
     ScoringService,
     RecommendationsService
   ]

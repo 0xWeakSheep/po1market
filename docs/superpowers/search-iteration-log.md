@@ -39,12 +39,19 @@
   - `backend/src/recommendations/query/domain/query.service.ts`
   - `backend/src/recommendations/query/api/query.controller.ts`
   - `backend/src/recommendations/query/integration/query-market.provider.ts`
+  - `backend/src/recommendations/retrieval/domain/retrieval.service.ts`
+  - `backend/src/recommendations/retrieval/domain/candidate-retriever.service.ts`
+  - `backend/src/recommendations/recommendations.service.ts`
   - `backend/src/recommendations/recommendations.module.ts`
   - `backend/src/recommendations/domain/market/market-context.resolver.ts`
+  - `backend/src/recommendations/retrieval/README.md`
+  - `backend/src/recommendations/query/README.md`
   - `backend/src/recommendations/types/recommendations.ts`
   - `backend/src/recommendations/query/domain/query.service.spec.ts`
 - **实现要点**：
   - 新增 `QueryService` 统一承载 query 逻辑：`buildQueries`（纯构建）+ `resolveQueries`（含 market 解析）；
+  - 增加 `QueryService.resolveMarketContext`，由推荐主链路直接复用，移除 `market-context.resolver`；
+  - 新增 `retrieval` 层，把 `query + search` 收口为统一服务（`RetrievalService`）；
   - 目录治理升级为 `api/domain/integration` 三层，分别承载功能接口、业务编排、提供方整合；
   - `query-builder.ts` 迁移至 `query/domain/query-builder.ts`，并同步迁移相关单测与引用路径；
   - 新增 `POST /api/v1/search/queries`，可独立输出 query 结果，作为后端查询能力接口；
@@ -54,7 +61,7 @@
   - 校验新增 QueryService 单测通过，原 query-builder 测试不回归。
 - **结果**：
   - 查询能力已完成“代码拆分 + 功能接口拆分”；
-  - 推荐主链路兼容保留，未改变现有 `/api/v1/recommendations` 入参契约。
+  - 推荐主链路完成按功能模块收口，未改变现有 `/api/v1/recommendations` 入参契约。
 - **风险与回滚**：
   - 风险：后续若 query 结构变化，需要同步 `QueryPreviewResponse` 与调用方解析；
   - 回滚：可移除 `QueryService/QueryController` 并恢复 resolver 内联构建（单文件回退路径清晰）。

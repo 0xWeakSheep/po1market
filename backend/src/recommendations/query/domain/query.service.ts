@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { buildSearchQueries } from './query-builder'
 import { QueryMarketProvider } from '../integration/query-market.provider'
 import type {
+  MarketContext,
   QueryPreviewResponse,
   RecommendationRequest
 } from '../../types/recommendations'
@@ -30,6 +31,19 @@ export class QueryService {
       question: queryMarketInput.question,
       description: queryMarketInput.description,
       resolutionSource: queryMarketInput.resolutionSource,
+      searchQueries: this.buildQueries(queryMarketInput)
+    }
+  }
+
+  async resolveMarketContext (request: RecommendationRequest): Promise<MarketContext> {
+    const queryMarketInput = await this.queryMarketProvider.resolveQueryMarketInput(request)
+
+    return {
+      marketId: queryMarketInput.marketId,
+      question: queryMarketInput.question,
+      description: queryMarketInput.description,
+      resolutionSource: queryMarketInput.resolutionSource,
+      endDate: queryMarketInput.endDate,
       searchQueries: this.buildQueries(queryMarketInput)
     }
   }

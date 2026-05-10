@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
 
 import { PolymarketClient } from '../../clients/polymarket.client'
-import type { RecommendationRequest } from '../../types/recommendations'
+import type {
+  MarketContext,
+  RecommendationRequest
+} from '../../types/recommendations'
 
-type QueryMarketInput = {
+type QueryMarketInput = Omit<MarketContext, 'searchQueries'> & {
   question: string
-  description?: string
-  resolutionSource?: string
 }
 
 @Injectable()
@@ -17,9 +18,11 @@ export class QueryMarketProvider {
     if (request.market_id) {
       const market = await this.polymarketClient.fetchMarket(request.market_id)
       return {
+        marketId: market.marketId,
         question: request.market_question ?? market.question,
         description: request.market_description ?? market.description,
-        resolutionSource: request.resolution_source ?? market.resolutionSource
+        resolutionSource: request.resolution_source ?? market.resolutionSource,
+        endDate: market.endDate
       }
     }
 

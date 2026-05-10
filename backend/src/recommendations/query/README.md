@@ -73,5 +73,15 @@
 ## 5. 与推荐主链路关系
 
 - `RecommendationsService` 仍是主推荐入口（`/api/v1/recommendations`）
-- `MarketContextResolverService` 会复用 `QueryService.buildQueries`
+- `RecommendationsService` 通过 `QueryService.resolveMarketContext` 获取市场上下文与搜索查询词
 - `query` 模块接口可被前端/调试工具单独调用，不依赖完整推荐流程
+
+## 6. Recommendations 模块功能（协同说明）
+
+`recommendations` 模块聚焦“推荐结果编排”，主要职责：
+
+- 标准化请求参数（默认值与边界校验）
+- 调用 `query` 模块产出 `MarketContext`
+- 调用 `search` 候选召回
+- 调用 `scoring` 完成打分与 stale 过滤
+- 组装 `recommended_sources` 响应

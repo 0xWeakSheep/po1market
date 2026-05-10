@@ -13,8 +13,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SETTINGS } from '../common/constants'
 import type { Settings } from '../config/settings'
 import { normalizeRequest } from './application/normalize-request'
-import { MarketContextResolverService } from './domain/market/market-context.resolver'
-import { SearchClient } from './clients/search.client'
+import { RetrievalService } from './retrieval/domain/retrieval.service'
 import { ScoringService } from './scoring.service'
 import {
   type RecommendationRequest,
@@ -25,8 +24,7 @@ import {
 export class RecommendationsService {
   constructor (
     @Inject(SETTINGS) private readonly settings: Settings,
-    private readonly marketContextResolver: MarketContextResolverService,
-    private readonly searchClient: SearchClient,
+    private readonly retrievalService: RetrievalService,
     private readonly scoringService: ScoringService
   ) {}
 
@@ -35,17 +33,17 @@ export class RecommendationsService {
     //标准化请求
     const normalizedRequest = normalizeRequest(request, this.settings)
     console.log('[backend]normalizedRequest', normalizedRequest)
-    const market = await this.marketContextResolver.resolveMarket(normalizedRequest)
-    console.log('[backend]market', market)
-
-    const candidates = await this.searchClient.gatherCandidates({
-      queries: market.searchQueries,
-      resolutionSource: market.resolutionSource,
+    const retrievalResult = await this.retrievalService.retrieve({
+      request: normalizedRequest,
       candidateLimit: normalizedRequest.candidate_limit ?? this.settings.marketCandidateLimit
     })
-    console.log('[backend]candidates', candidates)
+    console.log('[backend]market', retrievalResult.market)
+    console.log('[backend]candidates', retrievalResult.candidates)
 
-    const scoredCandidates = await this.scoringService.scoreCandidates(market, candidates)
+    const scoredCandidates = await this.scoringService.scoreCandidates(
+      retrievalResult.market,
+      retrievalResult.candidates
+    )
     const recommended = scoredCandidates
       .filter((candidate) => !candidate.stale)
       .slice(0, normalizedRequest.max_results ?? this.settings.marketDefaultLimit)

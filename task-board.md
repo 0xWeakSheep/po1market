@@ -38,6 +38,8 @@
 - 已拆出 Query 独立服务：`QueryService`
 - 已新增 Query 独立接口：`POST /api/v1/search/queries`
 - Query 目录治理已落地：`query/api`（功能接口）+ `query/domain`（业务）+ `query/integration`（提供方整合）
+- 已新增 Retrieval 层：统一串联 `query -> candidate pool`（`RetrievalService`）
+- 推荐主链路已改为直接复用 `QueryService.resolveMarketContext`（移除 `market-context.resolver`）
 - 已支持 `market_id` 和 `market_question` 两种入口
 - 已打通主链路：
   `market -> query builder -> candidate search -> scoring -> recommended_sources`
