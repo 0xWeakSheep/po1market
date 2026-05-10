@@ -1,3 +1,11 @@
+/**
+ * OpenAI 客户端
+ * 
+ * 功能：
+ * 1. 打分候选链接
+ * 2. 返回打分结果
+ */
+
 import { Inject, Injectable } from '@nestjs/common'
 
 import { SETTINGS } from '../../common/constants'

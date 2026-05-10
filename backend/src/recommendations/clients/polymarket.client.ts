@@ -1,3 +1,10 @@
+/**
+ * Polymarket 客户端
+ * 
+ * 功能：
+ * 1. 获取市场上下文
+ * 2. 返回市场上下文
+ */
 import { BadRequestException, Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
 
 import { SETTINGS } from '../../common/constants'

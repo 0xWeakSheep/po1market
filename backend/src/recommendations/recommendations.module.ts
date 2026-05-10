@@ -5,6 +5,7 @@ import { getSettings } from '../config/settings'
 import { OpenAiClient } from './clients/openai.client'
 import { PolymarketClient } from './clients/polymarket.client'
 import { SearchClient } from './clients/search.client'
+import { MarketContextResolverService } from './domain/market/market-context.resolver'
 import { RecommendationsController } from './recommendations.controller'
 import { RecommendationsService } from './recommendations.service'
 import { ScoringService } from './scoring.service'
@@ -16,6 +17,7 @@ import { ScoringService } from './scoring.service'
     PolymarketClient,
     SearchClient,
     OpenAiClient,
+    MarketContextResolverService,
     ScoringService,
     RecommendationsService
   ]

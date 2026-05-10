@@ -1,3 +1,11 @@
+/**
+ * 搜索客户端
+ * 
+ * 功能：
+ * 1. 收集候选源：reddit、google news
+ * 2. 返回候选源列表：去重、限制数量
+ */
+
 import { Inject, Injectable } from '@nestjs/common'
 
 import { SETTINGS } from '../../common/constants'
@@ -8,6 +16,14 @@ import type { CandidateSource } from '../types/recommendations'
 export class SearchClient {
   constructor (@Inject(SETTINGS) private readonly settings: Settings) {}
 
+  /**
+   * 收集候选源
+   * 
+   * 输入：
+   * 1. 查询词列表
+   * 2. 官方来源
+   * 3. 候选源限制
+   */
   async gatherCandidates (input: {
     queries: string[]
     resolutionSource?: string
@@ -35,6 +51,13 @@ export class SearchClient {
     return dedupeCandidates(candidates).slice(0, input.candidateLimit)
   }
 
+  /**
+   * 搜索 Google News
+   * 
+   * 输入：
+   * 1. 查询词
+   * 2. 限制
+   */
   private async searchGoogleNews (query: string, limit: number): Promise<CandidateSource[]> {
     const params = new URLSearchParams({
       q: query,
@@ -66,6 +89,13 @@ export class SearchClient {
     })
   }
 
+  /**
+   * 搜索 Reddit
+   * 
+   * 输入：
+   * 1. 查询词
+   * 2. 限制
+   */
   private async searchReddit (query: string, limit: number): Promise<CandidateSource[]> {
     const params = new URLSearchParams({
       q: query,
@@ -105,7 +135,19 @@ export class SearchClient {
     })
   }
 
-  private async fetchText (url: string): Promise<string> {
+  /**
+   * 获取文本
+   * 
+   * 输入：
+   * 1. URL
+   */
+  /**
+   * 获取 JSON
+   * 
+   * 输入：
+   * 1. URL
+   */
+    private async fetchText (url: string): Promise<string> {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), this.settings.requestTimeoutSeconds * 1000)
 

@@ -9,7 +9,8 @@ async function bootstrap (): Promise<void> {
   app.enableCors({
     origin: process.env.PO1MARKET_CORS_ORIGIN?.split(',').map((o) => o.trim()) ?? true
   })
-  const port = Number(process.env.PORT ?? 3000)
+  //默认3001避免与前端冲突
+  const port = Number(process.env.PORT ?? 3001)
   await app.listen(port)
 }
 

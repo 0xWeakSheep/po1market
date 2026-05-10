@@ -3,6 +3,8 @@
 > 最后更新：2026-05-10  
 > 维护目标：作为“搜索能力演进”的单一事实源（Single Source of Truth），后续每次改动都在此文档增量更新。
 
+关联迭代记录：`docs/superpowers/search-iteration-log.md`
+
 ## 1. 产品目标与当前定位
 
 - 当前产品目标：输入 `market_id` 或 `market_question`，返回可用于后续 agent 分析的候选信息源链接。
@@ -115,6 +117,7 @@
 1. 本文档的 `最后更新` 日期
 2. 本文档底部“变更记录”新增 1 条
 3. `task-board.md` 的 `Source Recommendation API` 中“当前进度/下一步”同步刷新
+4. `docs/superpowers/search-iteration-log.md` 追加一条“迭代记录”
 
 建议在 PR 描述中附上：“已更新 `docs/superpowers/search-current-state.md`”。
 

@@ -5,6 +5,13 @@ Applications in this repo:
 - **`backend/`** — **NestJS recommendation API** — implements `POST /api/v1/recommendations` (scoring, data, validation).
 - **`frontend/`** — **Next.js UI** — Query Console, layout, and browser `fetch` client only; see `frontend/README.md` for layout and backend vs frontend responsibilities.
 
+## Documentation
+
+- **`docs/superpowers/README.md`** — 技术文档治理入口（前后端分治）
+- **`docs/superpowers/search-current-state.md`** — 后端搜索现状基线
+- **`docs/superpowers/search-iteration-log.md`** — 后端搜索迭代记录
+- **`docs/superpowers/frontend-iteration-log.md`** — 前端迭代记录
+
 ## 职责划分（简表）
 
 - **后端 (`backend/`)**：预测市场解析、来源推荐与返回 JSON 契约。

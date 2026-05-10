@@ -1,3 +1,12 @@
+/**
+ * 查询构建器
+ * 
+ * 功能：
+ * 1. 标准化空白
+ * 2. 提取焦点子句
+ * 3. 生成查询词列表
+ * 4. 添加官方来源查询
+ */
 const STOP_WORDS = new Set([
   'a',
   'an',
@@ -28,6 +37,14 @@ type BuildSearchQueriesInput = {
   resolutionSource?: string
 }
 
+/**
+ * 构建搜索查询词列表
+ * 
+ * 输入：
+ * 1. 问题
+ * 2. 描述
+ * 3. 官方来源
+ */
 export function buildSearchQueries ({
   question,
   description,
@@ -74,6 +91,15 @@ export function inferUrgency (question: string): number {
   return 30
 }
 
+/**
+ * 去重并过滤空值
+ * 
+ * 输入：
+ * 1. 查询词列表
+ * 
+ * 输出：
+ * 1. 去重后的查询词列表
+ */
 function uniqueNonEmpty (values: string[]): string[] {
   const seen = new Set<string>()
   const result: string[] = []
@@ -92,6 +118,15 @@ function uniqueNonEmpty (values: string[]): string[] {
   return result
 }
 
+/**
+ * 提取焦点子句
+ * 
+ * 输入：
+ * 1. 问题
+ * 
+ * 输出：
+ * 1. 焦点子句
+ */
 /** Align with Python `query_builder._extract_focus_clause` + `strip(" ?")`. */
 function extractFocusClause (question: string): string {
   const parts = question.split(/\b(before|after|by|if|unless|until)\b/i)

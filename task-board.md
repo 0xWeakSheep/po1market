@@ -70,6 +70,9 @@
 - `/backend/src/recommendations/scoring.service.ts`
 - `/backend/src/recommendations/clients/polymarket.client.ts`
 - `/docs/superpowers/search-current-state.md`（搜索现状基线与演进记录）
+- `/docs/superpowers/search-iteration-log.md`（技术迭代日志）
+- `/docs/superpowers/frontend-iteration-log.md`（前端迭代日志）
+- `/docs/superpowers/README.md`（文档治理入口：前后端分治）
 
 ### Owner
 
