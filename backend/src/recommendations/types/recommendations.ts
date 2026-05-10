@@ -44,6 +44,13 @@ export type RecommendationResponse = {
   recommended_sources: RecommendedLink[]
 }
 
+export type QueryPreviewResponse = {
+  question: string
+  description?: string
+  resolutionSource?: string
+  searchQueries: string[]
+}
+
 export type RecommendationService = {
   recommend: (request: RecommendationRequest) => Promise<RecommendationResponse>
 }

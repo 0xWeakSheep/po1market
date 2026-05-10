@@ -1,6 +1,6 @@
 /**
  * 查询构建器
- * 
+ *
  * 功能：
  * 1. 标准化空白
  * 2. 提取焦点子句
@@ -39,7 +39,7 @@ type BuildSearchQueriesInput = {
 
 /**
  * 构建搜索查询词列表
- * 
+ *
  * 输入：
  * 1. 问题
  * 2. 描述
@@ -93,10 +93,10 @@ export function inferUrgency (question: string): number {
 
 /**
  * 去重并过滤空值
- * 
+ *
  * 输入：
  * 1. 查询词列表
- * 
+ *
  * 输出：
  * 1. 去重后的查询词列表
  */
@@ -120,10 +120,10 @@ function uniqueNonEmpty (values: string[]): string[] {
 
 /**
  * 提取焦点子句
- * 
+ *
  * 输入：
  * 1. 问题
- * 
+ *
  * 输出：
  * 1. 焦点子句
  */

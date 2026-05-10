@@ -9,7 +9,7 @@ import { BadRequestException, Inject, Injectable, ServiceUnavailableException } 
 
 import { SETTINGS } from '../../common/constants'
 import type { Settings } from '../../config/settings'
-import { buildSearchQueries } from '../query-builder'
+import { buildSearchQueries } from '../query/domain/query-builder'
 import type { MarketContext } from '../types/recommendations'
 
 type PolymarketMarketPayload = {

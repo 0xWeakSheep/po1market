@@ -8,7 +8,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { PolymarketClient } from '../../clients/polymarket.client'
-import { buildSearchQueries } from '../../query-builder'
+import { QueryService } from '../../query/domain/query.service'
 import {
   type MarketContext,
   type RecommendationRequest
@@ -16,25 +16,28 @@ import {
 
 @Injectable()
 export class MarketContextResolverService {
-  constructor (private readonly polymarketClient: PolymarketClient) {}
+  constructor (
+    private readonly polymarketClient: PolymarketClient,
+    private readonly queryService: QueryService
+  ) {}
 
+  /**
+   * 解析市场上下文
+   * 
+   * 输入：
+   * 1. 请求
+   * 
+   * 输出：
+   * 1. 市场上下文
+   */
   async resolveMarket (request: RecommendationRequest): Promise<MarketContext> {
+    //如果是market_id，则从polymarket获取市场上下文
     if (request.market_id) {
       const market = await this.polymarketClient.fetchMarket(request.market_id)
-
-      if (request.market_question) {
-        market.question = request.market_question
-      }
-
-      if (request.market_description) {
-        market.description = request.market_description
-      }
-
-      if (request.resolution_source) {
-        market.resolutionSource = request.resolution_source
-      }
-
-      market.searchQueries = buildSearchQueries({
+      market.question = request.market_question ?? market.question
+      market.description = request.market_description ?? market.description
+      market.resolutionSource = request.resolution_source ?? market.resolutionSource
+      market.searchQueries = this.queryService.buildQueries({
         question: market.question,
         description: market.description,
         resolutionSource: market.resolutionSource
@@ -47,7 +50,7 @@ export class MarketContextResolverService {
       question: request.market_question ?? '',
       description: request.market_description,
       resolutionSource: request.resolution_source,
-      searchQueries: buildSearchQueries({
+      searchQueries: this.queryService.buildQueries({
         question: request.market_question ?? '',
         description: request.market_description,
         resolutionSource: request.resolution_source

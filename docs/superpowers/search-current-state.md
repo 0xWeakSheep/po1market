@@ -26,10 +26,14 @@
 
 ## 3. 模块现状（按职责）
 
-### 3.1 Query 生成：`backend/src/recommendations/query-builder.ts`
+### 3.1 Query 生成：`backend/src/recommendations/query/domain/query.service.ts`
 
-- 当前策略：规则生成，多数情况下产出 2~4 条 query。
+- 当前策略：已拆分为独立 QueryService，对外提供 query 预览接口，内部仍采用规则生成，多数情况下产出 2~4 条 query。
 - 关键行为：
+  - 目录治理采用三层：`query/api`（功能接口）、`query/domain`（业务编排）、`query/integration`（提供方整合）；
+  - `query-builder.ts` 已迁移至 `query/domain/query-builder.ts`，与 QueryService 共同归属业务层；
+  - 新增 `POST /api/v1/search/queries`，支持基于 `market_id` 或 `market_question` 返回 `searchQueries`；
+  - `MarketContextResolverService` 改为复用 `QueryService.buildQueries`，避免 query 逻辑散落在 resolver；
   - `normalizeWhitespace` 做空白归一；
   - `extractFocusClause` 基于 `before/after/by/if/unless/until` 截取主干；
   - 移除停用词后取前 6 个 token 形成 key phrase；
@@ -119,6 +123,13 @@
 3. `task-board.md` 的 `Source Recommendation API` 中“当前进度/下一步”同步刷新
 4. `docs/superpowers/search-iteration-log.md` 追加一条“迭代记录”
 
+文件夹治理补充约束（搜索后端）：
+
+- 功能接口层统一放在 `*/api`（Controller / DTO / Contract）；
+- 业务层统一放在 `*/domain`（UseCase / Service / Rule）；
+- 提供方整合层统一放在 `*/integration`（第三方 API、外部 provider 适配）；
+- 禁止在 Controller 直接拼业务逻辑，禁止在 Domain 直接调用外部 provider 客户端。
+
 建议在 PR 描述中附上：“已更新 `docs/superpowers/search-current-state.md`”。
 
 ## 9. 变更记录
@@ -128,3 +139,5 @@
 - 新建本文档，沉淀当前搜索链路事实基线；
 - 明确 Query / Recall / Scoring / Response 四段职责与已知限制；
 - 设定后续迭代的指标口径与文档更新规则。
+- Query 模块拆分为独立 `QueryService`，并新增 query 预览接口 `POST /api/v1/search/queries`。
+- Query 模块升级为文件夹治理拆分：`api/domain/integration` 三层。

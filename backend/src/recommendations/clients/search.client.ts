@@ -31,6 +31,7 @@ export class SearchClient {
   }): Promise<CandidateSource[]> {
     const candidates: CandidateSource[] = []
 
+    //如果官方来源是URL，则直接加入候选源
     if (input.resolutionSource?.startsWith('http')) {
       candidates.push({
         title: 'Official resolution source',
@@ -41,13 +42,17 @@ export class SearchClient {
       })
     }
 
+    //计算查询词预算
     const queryBudget = Math.max(1, Math.floor(input.candidateLimit / Math.max(1, input.queries.length)))
 
     for (const query of input.queries) {
+      //搜索Google News
       candidates.push(...await this.searchGoogleNews(query, queryBudget))
+      //搜索Reddit
       candidates.push(...await this.searchReddit(query, Math.max(1, Math.floor(queryBudget / 3))))
     }
 
+    //去重并截断
     return dedupeCandidates(candidates).slice(0, input.candidateLimit)
   }
 

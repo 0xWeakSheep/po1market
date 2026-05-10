@@ -35,6 +35,9 @@
 ### 当前进度
 
 - 已有 NestJS 后端主接口：`POST /api/v1/recommendations`
+- 已拆出 Query 独立服务：`QueryService`
+- 已新增 Query 独立接口：`POST /api/v1/search/queries`
+- Query 目录治理已落地：`query/api`（功能接口）+ `query/domain`（业务）+ `query/integration`（提供方整合）
 - 已支持 `market_id` 和 `market_question` 两种入口
 - 已打通主链路：
   `market -> query builder -> candidate search -> scoring -> recommended_sources`
@@ -49,6 +52,7 @@
 
 ### 下一步
 
+- 为 `POST /api/v1/search/queries` 增加 e2e 验证
 - 优化 query 生成策略
 - 增加更多 source provider
 - 提升时间敏感盘口的 freshness 判断
@@ -57,7 +61,7 @@
 
 ### 适合认领的任务
 
-- 改 `query-builder`
+- 改 `query/domain/query-builder.ts`
 - 加新的候选源
 - 调整 scoring 阈值
 - 补 query / scoring 测试
@@ -65,7 +69,10 @@
 ### 主要文件
 
 - `/backend/src/recommendations/recommendations.service.ts`
-- `/backend/src/recommendations/query-builder.ts`
+- `/backend/src/recommendations/query/domain/query-builder.ts`
+- `/backend/src/recommendations/query/api/query.controller.ts`
+- `/backend/src/recommendations/query/domain/query.service.ts`
+- `/backend/src/recommendations/query/integration/query-market.provider.ts`
 - `/backend/src/recommendations/clients/search.client.ts`
 - `/backend/src/recommendations/scoring.service.ts`
 - `/backend/src/recommendations/clients/polymarket.client.ts`
@@ -76,7 +83,7 @@
 
 ### Owner
 
-- 当前主线：你
+- 当前主线：Elemen
 - 可协作：开放认领
 
 ---

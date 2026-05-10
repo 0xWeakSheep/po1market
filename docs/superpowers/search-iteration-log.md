@@ -32,6 +32,36 @@
 
 ## 3. 迭代记录
 
+### 2026-05-10 Query 模块服务化拆分（代码 + 接口）
+
+- **背景**：查询构建逻辑此前耦合在 `MarketContextResolverService` 与 `query-builder` 调用点中，缺少独立服务边界和可单独调用接口，不利于后续 Agent 编排与调试。
+- **改动范围**：
+  - `backend/src/recommendations/query/domain/query.service.ts`
+  - `backend/src/recommendations/query/api/query.controller.ts`
+  - `backend/src/recommendations/query/integration/query-market.provider.ts`
+  - `backend/src/recommendations/recommendations.module.ts`
+  - `backend/src/recommendations/domain/market/market-context.resolver.ts`
+  - `backend/src/recommendations/types/recommendations.ts`
+  - `backend/src/recommendations/query/domain/query.service.spec.ts`
+- **实现要点**：
+  - 新增 `QueryService` 统一承载 query 逻辑：`buildQueries`（纯构建）+ `resolveQueries`（含 market 解析）；
+  - 目录治理升级为 `api/domain/integration` 三层，分别承载功能接口、业务编排、提供方整合；
+  - `query-builder.ts` 迁移至 `query/domain/query-builder.ts`，并同步迁移相关单测与引用路径；
+  - 新增 `POST /api/v1/search/queries`，可独立输出 query 结果，作为后端查询能力接口；
+  - 原推荐主链路改为复用 `QueryService`，实现“查询逻辑集中维护”。
+- **验证方式**：
+  - 运行 `npm run test -- query/domain/query-builder.spec.ts query/domain/query.service.spec.ts`；
+  - 校验新增 QueryService 单测通过，原 query-builder 测试不回归。
+- **结果**：
+  - 查询能力已完成“代码拆分 + 功能接口拆分”；
+  - 推荐主链路兼容保留，未改变现有 `/api/v1/recommendations` 入参契约。
+- **风险与回滚**：
+  - 风险：后续若 query 结构变化，需要同步 `QueryPreviewResponse` 与调用方解析；
+  - 回滚：可移除 `QueryService/QueryController` 并恢复 resolver 内联构建（单文件回退路径清晰）。
+- **下一步**：
+  - 为 `POST /api/v1/search/queries` 增加 e2e 覆盖；
+  - 将 query 输出接入前端调试面板，提升检索可解释性。
+
 ### 2026-05-10 文档体系初始化（现状基线 + 迭代日志）
 
 - **背景**：搜索能力正在进入 Agent 化迭代阶段，需要先建立统一文档口径，避免开发过程中信息分散。

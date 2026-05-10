@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { inferUrgency } from './query-builder'
+import { inferUrgency } from './query/domain/query-builder'
 import { OpenAiClient } from './clients/openai.client'
 import {
   type CandidateSource,
