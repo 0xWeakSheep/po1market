@@ -1,3 +1,11 @@
+/**
+ * 配置
+ * 
+ * 功能：
+ * 1. 读取配置
+ * 2. 返回配置
+ */
+
 export type Settings = {
   polymarketGammaApi: string
   /** Same as Python `request_timeout_seconds` (httpx timeout). */
@@ -8,9 +16,15 @@ export type Settings = {
   openaiApiKey?: string
   openaiBaseUrl: string
   openaiModel: string
+  /** Query planning only: DeepSeek Chat Completions (OpenAI-compatible). */
+  deepseekApiKey?: string
+  deepseekBaseUrl: string
+  deepseekModel: string
   llmRerankEnabled: boolean
   marketDefaultLimit: number
   marketCandidateLimit: number
+  /** 为 true 时 Planner 等在 debug 路径输出诊断信息（不写密钥）。 */
+  queryDebugEnabled: boolean
 }
 
 function readTimeoutSeconds (): number {
@@ -37,8 +51,12 @@ export function getSettings (): Settings {
     openaiApiKey: process.env.PO1MARKET_OPENAI_API_KEY,
     openaiBaseUrl: process.env.PO1MARKET_OPENAI_BASE_URL ?? 'https://api.openai.com/v1',
     openaiModel: process.env.PO1MARKET_OPENAI_MODEL ?? 'gpt-4.1-mini',
+    deepseekApiKey: process.env.PO1MARKET_DEEPSEEK_API_KEY,
+    deepseekBaseUrl: process.env.PO1MARKET_DEEPSEEK_BASE_URL ?? 'https://api.deepseek.com',
+    deepseekModel: process.env.PO1MARKET_DEEPSEEK_MODEL ?? 'deepseek-v4-flash',
     llmRerankEnabled: process.env.PO1MARKET_LLM_RERANK_ENABLED !== 'false',
     marketDefaultLimit: Number(process.env.PO1MARKET_MARKET_DEFAULT_LIMIT ?? 8),
-    marketCandidateLimit: Number(process.env.PO1MARKET_MARKET_CANDIDATE_LIMIT ?? 20)
+    marketCandidateLimit: Number(process.env.PO1MARKET_MARKET_CANDIDATE_LIMIT ?? 20),
+    queryDebugEnabled: process.env.PO1MARKET_QUERY_DEBUG === 'true'
   }
 }
