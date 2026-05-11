@@ -1,3 +1,11 @@
+/**
+ * 查询规划模式
+ * 
+ * 功能：
+ * 1. 解析查询规划模式
+ * 2. 返回查询规划模式
+ */
+
 import type { QueryPlanPayload } from '../../types/recommendations'
 
 export function parseQueryPlanPayload (raw: string): QueryPlanPayload {
@@ -26,6 +34,13 @@ export function parseQueryPlanPayload (raw: string): QueryPlanPayload {
   return payload
 }
 
+/**
+ * 清洗查询规划模式
+ * 
+ * 功能：
+ * 1. 清洗查询规划模式
+ * 2. 返回清洗后的查询规划模式
+ */
 export function sanitizePlannedQueries (
   payload: QueryPlanPayload,
   maxQueries: number

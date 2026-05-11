@@ -29,16 +29,13 @@ export class RecommendationsService {
   ) {}
 
   async recommend (request: RecommendationRequest): Promise<RecommendationResponse> {
-    console.log('[backend]recommend', request)
     //标准化请求
     const normalizedRequest = normalizeRequest(request, this.settings)
-    console.log('[backend]normalizedRequest', normalizedRequest)
+
     const retrievalResult = await this.retrievalService.retrieve({
       request: normalizedRequest,
       candidateLimit: normalizedRequest.candidate_limit ?? this.settings.marketCandidateLimit
     })
-    console.log('[backend]market', retrievalResult.market)
-    console.log('[backend]candidates', retrievalResult.candidates)
 
     const scoredCandidates = await this.scoringService.scoreCandidates(
       retrievalResult.market,
@@ -52,7 +49,8 @@ export class RecommendationsService {
       recommended_sources: recommended.map((candidate) => ({
         url: candidate.url,
         score: 0
-      }))
+      })),
+      planning_meta: retrievalResult.market.planning_meta
     }
   }
 }

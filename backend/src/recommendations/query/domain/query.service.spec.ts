@@ -1,5 +1,10 @@
 import { QueryService } from './query.service'
 
+/** 单测用 Settings（仅用到 query_debug 分支；其余字段由业务忽略） */
+const testSettingsNoDebug = (): { queryDebugEnabled: boolean } => ({
+  queryDebugEnabled: false
+})
+
 describe('QueryService', () => {
   const queryPlanningClientDisabled = {
     enabled: false,
@@ -19,7 +24,8 @@ describe('QueryService', () => {
 
     const service = new QueryService(
       queryMarketProvider as any,
-      queryPlanningClientDisabled as any
+      queryPlanningClientDisabled as any,
+      testSettingsNoDebug() as any
     )
     const result = await service.resolveQueries({
       market_id: 'm1',
@@ -47,7 +53,8 @@ describe('QueryService', () => {
 
     const service = new QueryService(
       queryMarketProvider as any,
-      queryPlanningClientDisabled as any
+      queryPlanningClientDisabled as any,
+      testSettingsNoDebug() as any
     )
     const marketContext = await service.resolveMarketContext({
       market_id: 'm2'
@@ -61,7 +68,8 @@ describe('QueryService', () => {
   it('buildQueries 会追加 official source 查询词', async () => {
     const service = new QueryService(
       { resolveQueryMarketInput: jest.fn() } as any,
-      queryPlanningClientDisabled as any
+      queryPlanningClientDisabled as any,
+      testSettingsNoDebug() as any
     )
     const queries = await service.buildQueries({
       question: 'Will Trump tweet today?',
@@ -77,13 +85,18 @@ describe('QueryService', () => {
     const queryPlanningClient = {
       enabled: true,
       planQueries: jest.fn().mockResolvedValue({
+        ok: true,
         outputText: JSON.stringify({
           primary_query: 'Will BTC close above 120k this month?',
           variants: ['BTC close above 120k official source']
         })
       })
     }
-    const service = new QueryService(queryMarketProvider as any, queryPlanningClient as any)
+    const service = new QueryService(
+      queryMarketProvider as any,
+      queryPlanningClient as any,
+      testSettingsNoDebug() as any
+    )
     const queries = await service.buildQueries({
       question: 'Will BTC close above 120k this month?'
     })
@@ -94,7 +107,8 @@ describe('QueryService', () => {
   it('falls back to legacy builder when planner returns invalid json', async () => {
     const service = new QueryService(
       { resolveQueryMarketInput: jest.fn() } as any,
-      { enabled: true, planQueries: jest.fn().mockResolvedValue({ outputText: 'oops' }) } as any
+      { enabled: true, planQueries: jest.fn().mockResolvedValue({ ok: true, outputText: 'oops' }) } as any,
+      { queryDebugEnabled: false } as any
     )
     const queries = await service.buildQueries({ question: 'Will Trump tweet today?' })
     expect(queries.some((query) => query.includes('Trump'))).toBe(true)
