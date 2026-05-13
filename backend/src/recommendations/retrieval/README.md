@@ -1,5 +1,7 @@
 # Retrieval 层说明（query + search）
 
+**搜索 / 召回参数与接口约定（给其他同学实现多源检索时对照）**：[`SEARCH-IO.md`](./SEARCH-IO.md)
+
 `retrieval` 是推荐主链路中的“查询层”，统一承载：
 
 - query planning（搜什么）

@@ -1,6 +1,18 @@
 # Superpowers 文档治理（前后端分治）
 
-> 最后更新：2026-05-11
+> 最后更新：2026-05-13
+
+## 本目录根文件一览（不搬迁，仅索引）
+
+| 文件 | 用途 |
+|------|------|
+| `README.md` | 本文：治理规则与分层说明 |
+| `api-contract-and-errors.md` | 前后端契约、HTTP 与 `planning_meta` 语义 |
+| `search-current-state.md` | 后端搜索主链路 **现状基线** |
+| `search-iteration-log.md` | 后端搜索相关 **迭代记录** |
+| `frontend-iteration-log.md` | 前端工作台 / UI **迭代记录** |
+| `plans/` | 按日期/主题的 **实施计划** |
+| `specs/` | 中长期 **设计规格**（与代码路径对照维护） |
 
 ## 目标
 

@@ -127,6 +127,7 @@
 - `RecommendationsService` 通过 `QueryService.resolveMarketContext` 获取市场上下文与搜索查询词
 - **`POST /api/v1/recommendations` 响应体在 `recommended_sources` 之外附带 `planning_meta`（可选）**，与预览接口同形，便于前端展示「LLM / 规则」与回退原因
 - `query` 模块接口可被前端/调试工具单独调用，不依赖完整推荐流程
+- **检索（多源 HTTP）入参 / 出参约定**：`backend/src/recommendations/retrieval/SEARCH-IO.md`
 
 ## 6. Recommendations 模块功能（协同说明）
 

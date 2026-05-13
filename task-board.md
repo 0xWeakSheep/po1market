@@ -88,8 +88,10 @@
 - `/backend/src/recommendations/retrieval/domain/retrieval.service.ts`
 - `/backend/src/recommendations/retrieval/domain/candidate-retriever.service.ts`
 - `/backend/src/recommendations/retrieval/integration/search.client.ts`
+- `/backend/src/recommendations/retrieval/SEARCH-IO.md`（搜索层参数与接口约定）
 - `/backend/src/recommendations/scoring.service.ts`
 - `/backend/src/recommendations/clients/openai.client.ts`
+- `/docs/README.md`（文档总索引）
 - `/docs/superpowers/specs/2026-05-13-scoring-rerank-roadmap.md`
 - `/backend/src/recommendations/clients/polymarket.client.ts`
 - `/docs/superpowers/api-contract-and-errors.md`（`planning_meta` 与降级语义）
