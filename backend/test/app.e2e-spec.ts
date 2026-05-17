@@ -2,14 +2,14 @@ import { Test } from '@nestjs/testing'
 import request from 'supertest'
 
 import { AppModule } from '../src/app.module'
-import { RecommendationsService } from '../src/recommendations/recommendations.service'
+import { InfraRecommendationsService } from '../src/infra/recommendations/infra-recommendations.service'
 
 describe('App (e2e)', () => {
   it('POST /api/v1/recommendations returns payload from service', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule]
     })
-      .overrideProvider(RecommendationsService)
+      .overrideProvider(InfraRecommendationsService)
       .useValue({
         recommend: async () => ({
           recommended_sources: [
