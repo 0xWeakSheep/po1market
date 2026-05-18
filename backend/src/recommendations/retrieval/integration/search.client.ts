@@ -45,12 +45,12 @@ export class SearchClient {
     //计算查询词预算
     const queryBudget = Math.max(1, Math.floor(input.candidateLimit / Math.max(1, input.queries.length)))
 
-    for (const query of input.queries) {
-      //搜索Google News
-      candidates.push(...await this.searchGoogleNews(query, queryBudget))
-      //搜索Reddit
-      candidates.push(...await this.searchReddit(query, Math.max(1, Math.floor(queryBudget / 3))))
-    }
+    const searchTasks = input.queries.flatMap((query) => [
+      this.searchGoogleNews(query, queryBudget),
+      this.searchReddit(query, Math.max(1, Math.floor(queryBudget / 3)))
+    ])
+    const resultGroups = await Promise.all(searchTasks)
+    candidates.push(...resultGroups.flat())
 
     //去重并截断
     return dedupeCandidates(candidates).slice(0, input.candidateLimit)
