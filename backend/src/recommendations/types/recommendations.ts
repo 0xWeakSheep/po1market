@@ -65,6 +65,22 @@ export type CandidateSource = {
   rationale?: string
 }
 
+export type RetrievalProviderDebug = {
+  provider: string
+  query_count: number
+  candidate_count: number
+  failed_query_count: number
+  failure_reasons?: string[]
+}
+
+export type RetrievalMeta = {
+  query_count: number
+  providers: RetrievalProviderDebug[]
+  total_candidates_before_scoring: number
+  total_candidates_after_scoring?: number
+  stale_filtered_count?: number
+}
+
 export type RecommendedLink = {
   url: string
   score: number
@@ -73,6 +89,7 @@ export type RecommendedLink = {
 export type RecommendationResponse = {
   recommended_sources: RecommendedLink[]
   planning_meta?: QueryPlanningMeta
+  retrieval_meta?: RetrievalMeta
 }
 
 export type QueryPreviewResponse = {
