@@ -28,7 +28,7 @@ describe("QueryConsole", () => {
   it("renders both query modes", () => {
     render(<QueryConsole />);
 
-    expect(screen.getByText(/使用市场 ID/)).toBeInTheDocument();
+    expect(screen.getByText(/使用 Polymarket 标识/)).toBeInTheDocument();
     expect(screen.getByText(/使用自定义市场/)).toBeInTheDocument();
   });
 
@@ -67,7 +67,7 @@ describe("QueryConsole", () => {
 
     await user.click(screen.getByRole("button", { name: /示例：市场 ID/ }));
 
-    expect(screen.getByLabelText(/市场 ID/)).toHaveValue("540816");
+    expect(screen.getByLabelText(/Polymarket 市场 ID/)).toHaveValue("540816");
   });
 
   it("uses /po1ymarket when NEXT_PUBLIC_API_BASE_URL is unset", async () => {
@@ -85,6 +85,25 @@ describe("QueryConsole", () => {
         expect.objectContaining({
           method: "POST",
           headers: { "Content-Type": "application/json" },
+        }),
+      );
+    });
+  });
+
+  it("submits explicit market slug when provided", async () => {
+    const user = userEvent.setup();
+
+    render(<QueryConsole />);
+
+    await user.click(screen.getByRole("button", { name: /示例：market slug/ }));
+    await user.click(screen.getByRole("button", { name: /查找来源/ }));
+
+    await waitFor(() => {
+      expect(vi.mocked(fetch)).toHaveBeenCalledWith(
+        "http://127.0.0.1:3001/api/v1/recommendations",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({ polymarket_market_slug: "fed-decision-in-october-bps" }),
         }),
       );
     });
